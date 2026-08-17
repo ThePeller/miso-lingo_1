@@ -30,49 +30,12 @@
   img{ display:block; max-width:100%; }
   button{ font-family:inherit; cursor:pointer; }
 
-  /* ---------- WIREFRAME NAV (dev-only, not part of the product) ---------- */
-  .dev-nav{
-    position:fixed;
-    top:0; left:0; right:0;
-    z-index:100;
-    display:flex;
-    gap:6px;
-    align-items:center;
-    padding:7px 12px;
-    background:#fff;
-    border-bottom:1px solid #ddd;
-    font-family:'Archivo',sans-serif;
-    font-size:10.5px;
-  }
-  .dev-nav span.tag{
-    font-size:9px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    color:#999;
-    margin-right:4px;
-  }
-  .dev-nav button{
-    font-size:10.5px;
-    background:#f0f0ee;
-    border:1px solid #ccc;
-    padding:4px 9px;
-    border-radius:20px;
-    color:var(--black);
-    font-weight:600;
-  }
-  .dev-nav button.active{ background:var(--black); color:#fff; border-color:var(--black); }
-  .dev-nav button:disabled{ opacity:.35; cursor:not-allowed; }
-
-  .app{
-    padding-top:38px; /* room for dev nav */
-  }
-
   .screen{ display:none; }
   .screen.visible{ display:block; }
 
   /* ---------- shared page shell ---------- */
-  .page-red{ background:var(--red); min-height:100vh; padding-bottom:110px; }
-  .page-cream{ background:var(--cream); min-height:100vh; padding-bottom:110px; }
+  .page-red{ background:var(--red); min-height:100vh; padding-bottom:72px; }
+  .page-cream{ background:var(--cream); min-height:100vh; padding-bottom:72px; }
 
   .site-header{
     background:var(--cream);
@@ -93,42 +56,42 @@
     position:fixed;
     bottom:0; left:0; right:0;
     z-index:40;
-    padding:20px 24px;
+    max-height:9vh;
+    padding:10px 16px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:18px;
-    flex-wrap:wrap;
+    gap:12px;
   }
   .donate-bar.on-cream{ background:var(--red); }
   .donate-bar.on-red{ background:var(--black); }
-  .donate-bar .copy-block{ max-width:420px; }
+  .donate-bar .copy-block{
+    flex:1 1 auto;
+    min-width:0; /* allow truncation inside a flex child */
+  }
   .donate-bar .headline{
     font-weight:800;
-    font-size:14.5px;
-    line-height:1.25;
+    font-size:12px;
+    line-height:1.3;
     color:var(--cream);
-    margin:0 0 3px;
-    text-transform:uppercase;
-  }
-  .donate-bar .subline{
-    font-size:13px;
-    font-weight:500;
     margin:0;
+    text-transform:uppercase;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
-  .donate-bar.on-cream .subline{ color:var(--cream); opacity:.92; }
-  .donate-bar.on-red .subline{ color:var(--red); }
   .btn-pill{
     font-family:'Fredoka', sans-serif;
     font-weight:700;
-    font-size:15px;
+    font-size:13px;
     border:none;
     border-radius:999px;
-    padding:14px 26px;
+    padding:9px 18px;
     white-space:nowrap;
     display:inline-block;
     text-decoration:none;
-    line-height:1.2;
+    line-height:1.3;
+    flex:0 0 auto;
   }
   .donate-bar.on-cream .btn-pill{ background:var(--cream); color:var(--red); }
   .donate-bar.on-red .btn-pill{ background:var(--cream); color:var(--black); }
@@ -385,13 +348,6 @@
 </head>
 <body>
 
-<div class="dev-nav">
-  <span class="tag">wireframe nav</span>
-  <button data-goto="landing" class="active">01 Landing</button>
-  <button data-goto="list">02 Lesson list</button>
-  <button data-goto="stage" id="stage-nav-btn" disabled>03 Card stage</button>
-</div>
-
 <div class="app">
 
   <!-- SCREEN 1: LANDING -->
@@ -407,7 +363,6 @@
     <div class="donate-bar on-cream">
       <div class="copy-block">
         <p class="headline">Fluency shouldn't be required to get a film made.</p>
-        <p class="subline">Donate to Share Her Journey.</p>
       </div>
       <a class="btn-pill" href="https://tiff.net/donate/share-her-journey" target="_blank" rel="noopener">Donate</a>
     </div>
@@ -424,7 +379,6 @@
     <div class="donate-bar on-red">
       <div class="copy-block">
         <p class="headline">Fluency shouldn't be required to get a film made.</p>
-        <p class="subline">Donate to Share Her Journey.</p>
       </div>
       <a class="btn-pill" href="https://tiff.net/donate/share-her-journey" target="_blank" rel="noopener">Donate</a>
     </div>
@@ -469,7 +423,6 @@
     <div class="donate-bar on-red">
       <div class="copy-block">
         <p class="headline">Fluency shouldn't be required to get a film made.</p>
-        <p class="subline">Donate to Share Her Journey.</p>
       </div>
       <a class="btn-pill" href="https://tiff.net/donate/share-her-journey" target="_blank" rel="noopener">Donate</a>
     </div>
@@ -560,20 +513,8 @@ function flipCard(){
 function goTo(screen){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
   document.getElementById('screen-' + screen).classList.add('visible');
-  document.querySelectorAll('.dev-nav button[data-goto]').forEach(b => b.classList.remove('active'));
-  const navBtn = document.querySelector(`.dev-nav button[data-goto="${screen}"]`);
-  if(navBtn){ navBtn.classList.add('active'); }
-  document.getElementById('stage-nav-btn').disabled = (currentIdx === null);
   window.scrollTo(0,0);
 }
-
-document.querySelectorAll('.dev-nav button[data-goto]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.getAttribute('data-goto');
-    if(target === 'stage' && currentIdx === null){ return; }
-    goTo(target);
-  });
-});
 
 buildList();
 updateCounter();
